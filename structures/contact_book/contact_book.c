@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 
-#define STRING_MAX_LEN 20
+#define STRING_MAX_LEN 40
 #define MAX_CONTACTS_COUNT 10
 
 struct PersonalCard
@@ -31,7 +31,12 @@ enum MatchCodes
 
 enum ActionCodes
 {
-	AC_EXIT, AC_FIND_CONTACT, AC_ADD_CONTACT, AC_EDIT_CONTACT, AC_DELETE_CONTACT, AC_MENU
+	AC_FIND_CONTACT=1, AC_ADD_CONTACT, AC_EDIT_CONTACT, AC_DELETE_CONTACT, AC_EXIT, AC_MENU
+};
+
+enum PersonalCardStatus
+{
+	PC_EMPTY, PC_FILLED
 };
 
 int StringClean(char *Str)
@@ -108,10 +113,19 @@ int PersonalCardSetup(struct PersonalCard *Pc,
 	return returnCode;
 }
 
+int PersonalCardStatus(const struct PersonalCard *Pc)
+{
+	if(0 == strlen(Pc -> Name))
+	{
+		return PC_EMPTY;
+	}
+	return PC_FILLED;
+}
+
 int PersonalCardPrint(const struct PersonalCard *Pc)
 {
 	if(NULL == Pc) return RC_ERROR;
-	if(0 == strlen(Pc->Name))
+	if(PC_EMPTY == PersonalCardStatus(Pc))
 	{
 		printf("No person data\n");
 		return RC_OK;
@@ -166,10 +180,11 @@ int Menu()
 	return returnCode;
 }
 
-void FindContacts(struct ContactList* Cl)
+void UserInput(const char* invite , char* buf)
 {
-	char buf[STRING_MAX_LEN];
-	printf("Enter text for search: ");
+	if((NULL == invite) || (NULL == buf)) return;
+
+	printf("%s ", invite);
 	fgets(buf, STRING_MAX_LEN, stdin);
 
 	char* pos = NULL;
@@ -179,6 +194,15 @@ void FindContacts(struct ContactList* Cl)
 	pos = NULL;
 	pos = strchr(buf, 13);
 	if(NULL != pos) *pos = 0;
+}
+
+void FindContacts(struct ContactList* Cl)
+{
+	if(NULL == Cl) return;
+
+	char buf[STRING_MAX_LEN];
+
+	UserInput("Enter text for search:", buf);
 
 	const struct PersonalCard *Pc = NULL;
 	int count = 0;
@@ -191,6 +215,43 @@ void FindContacts(struct ContactList* Cl)
 	}
 	printf("Find: %d contacts\n\n", count);
 }
+
+void AddContact(struct ContactList* Cl)
+{
+	if(NULL == Cl) return;
+
+	char Name[STRING_MAX_LEN];
+	char Surname[STRING_MAX_LEN];
+	char Patronymic[STRING_MAX_LEN];
+	char PhoneNumber[STRING_MAX_LEN];
+	char Email[STRING_MAX_LEN];
+
+	struct PersonalCard *Pc = NULL;
+	for(int i = 0; i < MAX_CONTACTS_COUNT; ++i)
+	{
+		if(PC_EMPTY == PersonalCardStatus(&(Cl->Contacts[i])))
+		{
+			Pc = &(Cl->Contacts[i]);
+			break;
+		}
+	}
+
+	if(NULL != Pc)
+	{
+		printf("New card:\n");
+		UserInput("Surname:", Surname);
+		UserInput("Name:", Name);
+		UserInput("Patronymic:", Patronymic);
+		UserInput("PhoneNumber:", PhoneNumber);
+		UserInput("Email:", Email);
+		PersonalCardSetup(Pc, Surname, Name, Patronymic, PhoneNumber, Email);
+	}
+	else
+	{
+		printf("Unable to add a contact! No blank personal cards.\n");
+	}
+}
+
 
 int main()
 {
@@ -244,7 +305,7 @@ int main()
 	struct ContactList Cl;
 	Fill(&Cl);
 
-	printf("List of contacts: \n");
+/*	printf("List of contacts: \n");
 	for(int i = 0; i < MAX_CONTACTS_COUNT; ++i)
 	{
 		printf("\nContact %d:\n", i+1);
@@ -261,6 +322,7 @@ int main()
 		count++;
 	}
 	printf("Find: %d contacts\n\n", count);
+*/
 	int choice = AC_EXIT;
 
 	while(1)
@@ -268,6 +330,7 @@ int main()
 		choice = Menu();
 		if(AC_EXIT == choice) break;
 		if(AC_FIND_CONTACT == choice) FindContacts(&Cl);
+		if(AC_ADD_CONTACT == choice) AddContact(&Cl);
 	}
 	return 0;
 }
