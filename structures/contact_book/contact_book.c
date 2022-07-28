@@ -209,6 +209,7 @@ void FindContacts(struct ContactList* Cl)
 	Find(NULL, NULL);
 	while(NULL != (Pc = Find(Cl, buf)))
 	{
+		printf("Card %d:\n", count+1);
 		PersonalCardPrint(Pc);
 		printf("\n");
 		count++;
@@ -238,17 +239,97 @@ void AddContact(struct ContactList* Cl)
 
 	if(NULL != Pc)
 	{
-		printf("New card:\n");
+ 		printf("New card:\n");
 		UserInput("Surname:", Surname);
 		UserInput("Name:", Name);
 		UserInput("Patronymic:", Patronymic);
 		UserInput("PhoneNumber:", PhoneNumber);
 		UserInput("Email:", Email);
 		PersonalCardSetup(Pc, Surname, Name, Patronymic, PhoneNumber, Email);
+		printf("Ok!\n");
+		printf("New information:\n");
+		PersonalCardPrint(Pc);
+
 	}
 	else
 	{
 		printf("Unable to add a contact! No blank personal cards.\n");
+	}
+}
+
+void EditContact(struct ContactList* Cl)
+{
+	if(NULL == Cl) return;
+
+	char Name[STRING_MAX_LEN];
+	char Surname[STRING_MAX_LEN];
+	char Patronymic[STRING_MAX_LEN];
+	char PhoneNumber[STRING_MAX_LEN];
+	char Email[STRING_MAX_LEN];
+
+	char buf[STRING_MAX_LEN];
+
+	printf("Enter a number of contact for edit (1 - %d):", MAX_CONTACTS_COUNT);
+	UserInput("", buf );
+	int pos = -1;
+	pos = atoi(buf) - 1;
+	if((pos >= 0)&&(pos < MAX_CONTACTS_COUNT))
+	{
+		if(PC_EMPTY == PersonalCardStatus(&(Cl->Contacts[pos])))
+		{
+			printf("This card is empty!\n");
+			return;
+		}
+		printf("Current information:\n");
+		PersonalCardPrint(&(Cl->Contacts[pos]));
+
+		printf("Enter  new data (empty string for keep old value):\n");
+		UserInput("Surname:", Surname);
+		UserInput("Name:", Name);
+		UserInput("Patronymic:", Patronymic);
+		UserInput("PhoneNumber:", PhoneNumber);
+		UserInput("Email:", Email);
+		PersonalCardSetup(&(Cl->Contacts[pos]),
+			((0 != strlen(Surname)) ? Surname : NULL),
+			((0 != strlen(Name)) ? Name : NULL),
+			((0 != strlen(Patronymic)) ? Patronymic : NULL),
+			((0 != strlen(PhoneNumber)) ? PhoneNumber : NULL),
+			((0 != strlen(Email)) ? Email : NULL));
+		printf("Ok\n");
+		printf("New information:\n");
+		PersonalCardPrint(&(Cl->Contacts[pos]));
+
+	}
+	else
+	{
+		printf("Uncorrect number of contact!\n");
+	}
+}
+
+
+void DeleteContact(struct ContactList* Cl)
+{
+	if(NULL == Cl) return;
+
+	char buf[STRING_MAX_LEN];
+
+	printf("Enter a number of contact for delete (1 - %d):", MAX_CONTACTS_COUNT);
+	UserInput("", buf );
+	int pos = -1;
+	pos = atoi(buf) - 1;
+	if((pos >= 0)&&(pos < MAX_CONTACTS_COUNT))
+	{
+		if(PC_EMPTY == PersonalCardStatus(&(Cl->Contacts[pos])))
+		{
+			printf("This card is empty!\n");
+			return;
+		}
+		PersonalCardClean(&(Cl->Contacts[pos]));
+		printf("Ok\n");
+	}
+	else
+	{
+		printf("Uncorrect number of contact!\n");
 	}
 }
 
@@ -331,6 +412,8 @@ int main()
 		if(AC_EXIT == choice) break;
 		if(AC_FIND_CONTACT == choice) FindContacts(&Cl);
 		if(AC_ADD_CONTACT == choice) AddContact(&Cl);
+		if(AC_EDIT_CONTACT == choice) EditContact(&Cl);
+		if(AC_DELETE_CONTACT == choice) DeleteContact(&Cl);
 	}
 	return 0;
 }
