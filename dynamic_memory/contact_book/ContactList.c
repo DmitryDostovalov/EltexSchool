@@ -201,7 +201,7 @@ void DeleteContact(struct ContactList* Cl)
 		{
 			newCl[i] = Cl->Contacts[i];
 		}
-		for(int i = pos; i < Cl->ContactsCount; ++i)
+		for(int i = pos+1; i < Cl->ContactsCount; ++i)
 		{
 			newCl[i-1] = Cl->Contacts[i];
 		}
