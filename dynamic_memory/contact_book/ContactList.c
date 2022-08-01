@@ -91,6 +91,11 @@ void AddContact(struct ContactList* Cl)
 	{
 		Cl->ContactsCount = 1;
 		Pc = calloc(1, sizeof(struct PersonalCard));
+		if(NULL == Pc)
+		{
+			perror("Out of memory!\n");
+			exit(EXIT_FAILURE);
+		}
 		Cl->Contacts = Pc;
 	}
 	else
@@ -197,6 +202,12 @@ void DeleteContact(struct ContactList* Cl)
 		}
 		struct PersonalCard* newCl = NULL;
 		newCl = calloc(Cl->ContactsCount-1, sizeof(struct PersonalCard));
+		if(NULL == newCl)
+		{
+			perror("Out of memory!\n");
+			exit(EXIT_FAILURE);
+		}
+
 		for(int i = 0; i < pos; ++i)
 		{
 			newCl[i] = Cl->Contacts[i];

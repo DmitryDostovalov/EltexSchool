@@ -24,7 +24,11 @@ void UserInput(const char* invite , char* buf)
 	if((NULL == invite) || (NULL == buf)) return;
 
 	printf("%s ", invite);
-	fgets(buf, STRING_MAX_LEN, stdin);
+	if(NULL == fgets(buf, STRING_MAX_LEN, stdin))
+	{
+		perror("Input error!\n");
+		exit(EXIT_FAILURE);
+	}
 
 	char* pos = NULL;
 	pos = strchr(buf, 10);

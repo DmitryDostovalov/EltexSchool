@@ -9,6 +9,11 @@
 void Fill(struct ContactList *Cl)
 {
 	Cl->Contacts = calloc(3, sizeof(struct PersonalCard));
+	if(NULL == Cl)
+	{
+		perror("Out of memory!\n");
+		exit(EXIT_FAILURE);
+	}
 	Cl->ContactsCount = 3;
 	PersonalCardSetup(&(Cl->Contacts[0]), "Ivanov", "Ivan", "Ivanovich", "+79011234567", "ivanov@mailserver.com");
 	PersonalCardSetup(&(Cl->Contacts[1]), "Petrov", "Ivan", "Sergeevich", "+79011234568", "petrov@mailserver.com");

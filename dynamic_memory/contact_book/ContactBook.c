@@ -14,6 +14,11 @@ enum ActionCodes
 void Fill(struct ContactList *Cl)
 {
 	Cl->Contacts = calloc(3, sizeof(struct PersonalCard));
+	if(NULL == Cl->Contacts)
+	{
+		perror("Out of memory!\n");
+		exit(EXIT_FAILURE);
+	}
 	Cl->ContactsCount = 3;
 	PersonalCardSetup(&(Cl->Contacts[0]), "Ivanov", "Ivan", "Ivanovich", "+79011234567", "ivanov@mailserver.com");
 	PersonalCardSetup(&(Cl->Contacts[1]), "Petrov", "Ivan", "Sergeevich", "+79011234568", "petrov@mailserver.com");
@@ -39,7 +44,13 @@ int Menu()
 
 	printf("Select action: ");
 
-	fgets(buf, STRING_MAX_LEN, stdin);
+	if(NULL == fgets(buf, STRING_MAX_LEN, stdin))
+	{
+		perror("Input error!\n");
+		exit(EXIT_FAILURE);
+	}
+
+
 	choice = atoi(buf);
 
 	switch(choice)
