@@ -148,7 +148,12 @@ void* supplier(void* number)
 			{
 				clock_gettime(CLOCK_REALTIME, &ts);
 				ts.tv_sec += 1;
-				pthread_cond_timedwait(&cond1, &m1, &ts);
+				if(0 == pthread_cond_timedwait(&cond1, &m1, &ts))
+				{
+					happy_supplier_count++;
+					printf("Supplier #%d has completed the delivery (signal received). Attempts to enter the store: %d, successful delivery: %d.\n", *num, try_cnt, success_cnt);
+					finished = 1;
+				}
 			}
 			else
 			{
