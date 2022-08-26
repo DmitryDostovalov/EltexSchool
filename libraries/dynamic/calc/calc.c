@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<unistd.h>
 
 #include"add.h"
 #include"sub.h"
@@ -60,16 +61,29 @@ int Menu()
 
 int main()
 {
-	double a = 1, b = 2, c = 3, d = 4, e = 5, f = 6;
+	double a = 0.0, b = 0.0;
 	int choice = AC_EXIT;
+
+	char buf1[STRING_MAX_LEN];
+	char buf2[STRING_MAX_LEN];
+
 	while(1)
 	{
 		choice = Menu();
 		if(AC_EXIT == choice) break;
+
+		UserInput("Enter a first number:", buf1);
+		a = atof(buf1);
+
+		UserInput("Enter a second number:", buf2);
+		b = atof(buf2);
+
 		if(AC_ADD == choice) printf("%.2f + %.2f = %.2f\n", a, b, my_add(a,b));
-		if(AC_SUB == choice) printf("%.2f - %.2f = %.2f\n", c, d, my_sub(c,d));
-		if(AC_MUL == choice) printf("%.2f * %.2f = %.2f\n", a, e, my_mul(a,e));
-		if(AC_DIV == choice) printf("%.2f / %.2f = %.2f\n", f, b, my_div(f,b));
+		if(AC_SUB == choice) printf("%.2f - %.2f = %.2f\n", a, b, my_sub(a,b));
+		if(AC_MUL == choice) printf("%.2f * %.2f = %.2f\n", a, b, my_mul(a,b));
+		if(AC_DIV == choice) printf("%.2f / %.2f = %.2f\n", a, b, my_div(a,b));
+
+		sleep(0.001);
 	}
 	return 0;
 }
