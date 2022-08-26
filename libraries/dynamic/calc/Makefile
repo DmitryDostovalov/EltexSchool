@@ -28,7 +28,7 @@ div.o: div.c
 	gcc div.c -fPIC -c
 
 clean:
-	rm -rf *.out *.so
+	rm -rf *.o *.out *.so
 
 exec:
 	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):$(PWD) ./calc.out
